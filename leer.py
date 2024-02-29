@@ -267,7 +267,7 @@ def create_co2_hora_graph(intervalo_co2_hora, pendiente, intercepto):
     fig.update_yaxes(gridcolor='lightgrey', linewidth=1)
     return fig
 
-def create_regresion_lineal_graph(df, pendiente):
+def create_regresion_lineal_graph(df, pendiente,intercepto):
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=df['Recuento'], 
