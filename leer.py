@@ -442,6 +442,8 @@ def aplicar_regresion_lineal(n_clicks, dia_seleccionado, inicio_hora, fin_hora, 
             if len(intervalo_co2_hora) > 1:
                 X = intervalo_co2_hora[['Recuento']]
                 y = intervalo_co2_hora['CO2']
+                regresion = LinearRegression()
+                regresion.fit(X, y)
                     # Calcular R^2
                 y_pred = regresion.predict(X)
                 r_cuadrado = regresion.score(X, y)
