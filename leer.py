@@ -406,7 +406,7 @@ def update_punto_options(dia_seleccionado):
     Output('regresion-lineal-graph', 'figure'),
     Output('tabla-co2', 'data'),
     Output('fecha-selector', 'options'),
-    Input('btn-regresion', 'n_clicks'),
+    Input('btn-regresion', 'n_clicks'), 
     State('filtro-dia', 'value'),
     State('input-inicio-hora', 'value'),
     State('input-fin-hora', 'value'),
