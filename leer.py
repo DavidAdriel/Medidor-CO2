@@ -246,7 +246,7 @@ def create_temperatura_humedad_graph(df_filtrado,nombre_punto):
     fig.update_yaxes(gridcolor='lightgrey', linewidth=1)
     return fig
 
-def create_co2_hora_graph(intervalo_co2_hora,pendiente,intercepto):
+def create_co2_hora_graph(intervalo_co2_hora,pendiente):
     
     fig = go.Figure()
     fig.add_trace(go.Scatter(
