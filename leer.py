@@ -246,7 +246,7 @@ def create_temperatura_humedad_graph(df_filtrado,nombre_punto):
     fig.update_yaxes(gridcolor='lightgrey', linewidth=1)
     return fig
 
-def create_co2_hora_graph(df_filtrado,nombre_punto):
+def create_co2_hora_graph(intervalo_co2_hora, pendiente, intercepto):
     
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -293,7 +293,7 @@ def create_regresion_lineal_graph(df, pendiente):
                 x=1,y=1,
                 xref="paper",
                 yref="paper",
-                text=f' Ecuacion: y = {pendiente:.2f}t + {df["y_pred"].mean():.2f}',
+                text=f' Ecuacion: y = {pendiente:.2f}t + {intercepto:.2f} ',
                 showarrow=False,font=dict(size=11),
             )
         ],
@@ -347,7 +347,7 @@ def update_graphs(dia_seleccionado, punto_seleccionado):
                     size = 10,
                     color = 'blue'
                 ),
-                text=texto_marcadores,  # Texto de los marcadores
+                text=texto_marcadores, 
                 textposition="top right",
             ),
             
@@ -441,17 +441,18 @@ def aplicar_regresion_lineal(n_clicks, dia_seleccionado, inicio_hora, fin_hora, 
             if len(intervalo_co2_hora) > 1:
                 X = intervalo_co2_hora[['Recuento']]
                 y = intervalo_co2_hora['CO2']
-                regresion = LinearRegression()
-                regresion.fit(X, y)
+                    # Calcular R^2
                 y_pred = regresion.predict(X)
+                r_cuadrado = regresion.score(X, y)
                 pendiente = regresion.coef_[0]
                 intervalo_co2_hora['y_pred'] = y_pred
-                fig_regresion_lineal = create_regresion_lineal_graph(intervalo_co2_hora, pendiente)
+                intercepto = regresion.intercept_
+                fig_regresion_lineal = create_regresion_lineal_graph(intervalo_co2_hora, pendiente, intercepto)
                 
                 if punto_seleccionado is not None:
                     # Enviar datos a la Hoja 2 de Google Sheets
                     fecha_seleccionada = datetime.strptime(dia_seleccionado, '%m/%d/%Y').strftime('%Y-%m-%d')
-                    values = [[fecha_seleccionada, pendiente, punto_etiqueta, latitud, longitud]]
+                    values = [[fecha_seleccionada, pendiente, punto_etiqueta, latitud, longitud,r_cuadrado]]
                     results = sheets.values().append(spreadsheetId=SPREADSHEETS_ID, range='Hoja 2!A1', 
                                                     valueInputOption='USER_ENTERED', 
                                                     body={'values': values}).execute()
@@ -489,14 +490,14 @@ def co2vs_D(selected_dates):
 
     if not selected_dates:
         # Si no se seleccionaron fechas, mostrar un mensaje o tomar alguna acción apropiada
-        return create_empty_graph()  # Debes definir una función create_empty_graph para mostrar un mensaje o un gráfico vacío
+        return create_empty_graph() 
 
     # Filtrar df2 por las fechas seleccionadas
     df2_cleaned = df2[df2['Fecha Mes'].isin(selected_dates)]
 
     if df2_cleaned.empty:
         # Si no hay datos para las fechas seleccionadas, mostrar un mensaje o tomar alguna acción apropiada
-        return create_empty_graph()  # Debes definir una función create_empty_graph para mostrar un mensaje o un gráfico vacío
+        return create_empty_graph()  
 
     df2_cleaned = df2_cleaned.dropna(subset=['Punto Medicion'])
     df2_cleaned = df2_cleaned[df2_cleaned['Punto Medicion'] != '']
@@ -504,10 +505,9 @@ def co2vs_D(selected_dates):
     
     return create_flux_vs_distance_graph(df2_cleaned, selected_dates)
 
-# Debes definir una función create_empty_graph para mostrar un mensaje o un gráfico vacío
+
 def create_empty_graph():
     fig = go.Figure()
-    # Personaliza el gráfico para mostrar un mensaje o un gráfico vacío
     return fig
 
 from datetime import datetime
@@ -516,7 +516,7 @@ def create_flux_vs_distance_graph(df2_cleaned, selected_dates):
     fig = go.Figure()
     print(selected_dates)
     
-    # Obtén todos los puntos únicos en el dataframe
+    
     all_puntos = sorted(df2_cleaned['Punto Medicion'].unique())
     
     for selected_date in selected_dates:
