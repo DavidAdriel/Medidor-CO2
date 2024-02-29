@@ -246,7 +246,7 @@ def create_temperatura_humedad_graph(df_filtrado,nombre_punto):
     fig.update_yaxes(gridcolor='lightgrey', linewidth=1)
     return fig
 
-def create_co2_hora_graph(intervalo_co2_hora, pendiente, intercepto):
+def create_co2_hora_graph(intervalo_co2_hora,pendiente,intercepto):
     
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -293,7 +293,7 @@ def create_regresion_lineal_graph(df, pendiente,intercepto):
                 x=1,y=1,
                 xref="paper",
                 yref="paper",
-                text=f' Ecuacion: y = {pendiente:.2f}t + {intercepto:.2f} ',
+                text=f' Ecuacion: y = {pendiente:.2f}t + {intercepto:.2f}',
                 showarrow=False,font=dict(size=11),
             )
         ],
@@ -417,6 +417,7 @@ def aplicar_regresion_lineal(n_clicks, dia_seleccionado, inicio_hora, fin_hora, 
     fig_regresion_lineal = go.Figure()
     intervalo_co2_hora = pd.DataFrame()
     pendiente = 0 
+    intercepto=0
     punto_etiqueta = None 
     latitud = None  
     longitud = None 
